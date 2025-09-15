@@ -77,7 +77,7 @@ const getCandidateById = async (req, res) => {
 //  @route PUT /api/candidate/:id
 // @access Private/Admin
 const updateCandidate = async (req, res) => {
-    const { admissionNo, name, team, category} = req.body;
+    const { admissionNo, name, team, category, isResultPublished} = req.body;
     try {
         const candidate = await Candidate.findById(req.params.id);
         if(!candidate) {
