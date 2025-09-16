@@ -7,6 +7,9 @@ const {
     updateProgramme,
     deleteProgramme
 }  = require('../controllers/programmeController');
+const resultRouter = require('./resultRoutes')
+
+router.use('/:id/results', resultRouter);
 
 router.route('/')
     .get(getAllProgrammes)
