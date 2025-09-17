@@ -127,10 +127,46 @@ const deleteCandidate = async (req, res) => {
     }
 }
 
+const addMinusPoint = async (req, res) => {
+    const { points } = req.body;
+    const { id: candidateId } = req.params;
+
+    const pointsToDeduct = Number(points);
+    if (!pointsToDeduct || pointsToDeduct <= 0) {
+        return res.status(400).json({ message: "Please provide a valid number of point to deduct ! "})
+    }
+    try {
+        const candidate = await Candidate.findById(candidateId);
+        if(!candidate) {
+            return res.status(404).json({ message: "Candidate not found"})
+        }
+        
+        // Add to the candidate's minusPoints tracker
+        candidate.minusPoints += pointsToDeduct;
+        // Subtract from the candidate's totalPoints
+        candidate.totalPoints -= pointsToDeduct;
+        await candidate.save();
+
+        // IMPORTANT: Also subtract the points from their team's total
+        const team = await Team.findById(candidate.team)
+        if (team) {
+            team.totalPoints -= pointsToDeduct;
+            await team.save();
+        }
+
+        res.status(200).json({ message: `${pointsToDeduct} points deducted successfully.`, candidate})
+    }
+    catch (error) {
+        console.error(`Error while add minus points ${error.message}`);
+        res.status(500).json({ message: 'Server Error'});
+    }
+}
+
 module.exports = {
     createCandidate, 
     getAllCandidates,
     getCandidateById,
     updateCandidate,
     deleteCandidate,
+    addMinusPoint,
 }
