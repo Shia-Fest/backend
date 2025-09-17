@@ -8,6 +8,7 @@ const connectDB = require('./config/db');
 const candidateRoutes = require('./routes/candidateRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const programmeRoutes = require('./routes/programmeRoutes');
+const leaderboardRoutes = require('./routes/leaderboardRoutes');
 
 connectDB();
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/candidates', candidateRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/programmes', programmeRoutes);
+app.use('/api/leaderboards', leaderboardRoutes);
 
 
 app.get('/', (req, res) => {
