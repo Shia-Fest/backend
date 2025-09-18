@@ -3,13 +3,19 @@ const router = express.Router();
 const {
     createTeam,
     getAllTeams,
-    deleteTeamById
+    deleteTeamById,
+    getTeamById,
+    updateTeamById,
+
 } = require('../controllers/teamController');
+const {protect} = require('../middlewares/authMiddleware');
 
 router.route('/')
     .get(getAllTeams)
-    .post(createTeam);
+    .post(protect ,createTeam);
 
 router.route('/:id')
-    .delete(deleteTeamById);
+    .get(getTeamById)
+    .put(protect, updateTeamById)
+    .delete(protect ,deleteTeamById);
 module.exports = router;
