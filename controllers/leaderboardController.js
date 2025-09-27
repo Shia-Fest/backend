@@ -1,36 +1,42 @@
 const Team = require('../models/Team');
 const Candidate = require('../models/Candidate');
 
-// @desc Get all leaderboards (team and top students by category)
-// @route GET /api/leaderboards
-// @access Public
+// @desc    Get all leaderboards (teams and top students by category)
+// @route   GET /api/leaderboards
+// @access  Public
 const getLeaderboards = async (req, res) => {
     try {
-        // Get team leaderboard
-        // Simple find and sort since we are already tracking totalPoints
-        const teamLeaderboard = await Team.find({}).sort({ totalPoints: -1 })
+        // --- 1. Get Team Leaderboard (No change here) ---
+        const teamLeaderboard = await Team.find({}).sort({ totalPoints: -1 });
 
-        // Get Top student leaderboard using Aggregation 
-        const topStudents = await Candidate.aggregate([
-            // Stage 1: Filter out candidates with 0 or less points
+        // --- 2. Get Top Student Leaderboards (THIS IS THE UPDATED PART) ---
+        const categoryTopStudents = await Candidate.aggregate([
+            { $match: { totalPoints: { $gt: 0 } } },
+            { $sort: { totalPoints: -1 } },
+            // THE FIX: We use $lookup to join with the 'teams' collection
             {
-                $match: {totalPoints: { $gt: 0 }}
+                $lookup: {
+                    from: 'teams', // The collection to join with
+                    localField: 'team', // The field from the Candidate document
+                    foreignField: '_id', // The field from the Team document
+                    as: 'teamInfo' // The name of the new array field to add
+                }
             },
-            // Stage 2: Sort candidates by total points in descending order
+            // $lookup creates an array, so we use $unwind to flatten it
             {
-                $sort: {totalPoints: -1}
+                $unwind: '$teamInfo'
             },
-            // Stage 3: Group candidates by their category
             {
                 $group: {
-                    _id: "$category", // Group by the 'category' field
-                    candidates: {
-                        $push: { // Push the top candidates into an array
-                            _id:"$_id",
+                    _id: "$category",
+                    candidates: { 
+                        $push: { 
+                            _id: "$_id",
                             name: "$name",
                             totalPoints: "$totalPoints",
-                            team: "$team",
-                            image: "$image"
+                            image: "$image",
+                            // Now we push the populated team object
+                            team: { _id: "$teamInfo._id", name: "$teamInfo.name" }
                         }
                     }
                 }
@@ -38,27 +44,28 @@ const getLeaderboards = async (req, res) => {
             {
                 $project: {
                     category: "$_id",
-                    candidates: { $slice: ["$candidates", 5]},
+                    candidates: { $slice: ["$candidates", 5] },
                     _id: 0
                 }
-            },
+            }
         ]);
-        // Get overall Top Students 
+        
+        // --- 3. Get Overall Top Students (No change here) ---
         const overallTopStudents = await Candidate.find({})
-            .sort({ totalPoints: -1})
+            .sort({ totalPoints: -1 })
             .limit(10)
-            .populate('team', 'name')
-
+            .populate('team', 'name');
+        
         res.status(200).json({
             teamLeaderboard,
-            categoryTopStudents: topStudents,
+            categoryTopStudents, // Send the newly fixed data
             overallTopStudents,
-        })
-    }
-    catch (error) {
-        console.error(`Error while fetching leaderboards ${error.message}`);
-        res.status(500).json({message: 'Server Error'})
-    }
-}
+        });
 
-module.exports = getLeaderboards;
+    } catch (error) {
+        console.error("Error fetching leaderboards:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+};
+
+module.exports = { getLeaderboards };

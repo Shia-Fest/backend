@@ -6,22 +6,28 @@ const {
     getCandidateById,
     updateCandidate,
     deleteCandidate,
-    addMinusPoint,
+    addMinusPoints,
+    searchCandidates,
+    getCandidateResults,
 } = require('../controllers/candidateController');
 
 const upload = require('../config/cloudinary');
+const { protect } = require('../middlewares/authMiddleware');
 
-router.route('/') 
+router.route('/')
     .get(getAllCandidates)
-    .post(upload.single('image'), createCandidate);
+    .post(protect, upload.single('image'), createCandidate);
 
+router.route('/search').get(searchCandidates);
 
 router.route('/:id')
     .get(getCandidateById)
-    .put(upload.single('image'), updateCandidate)
-    .delete(deleteCandidate);
+    .put(protect, upload.single('image'), updateCandidate)
+    .delete(protect, deleteCandidate);
 
-// Handles deducting points from a specific candidate
-router.route('/:id/minus-points').post(addMinusPoint);
+router.route('/:id/minus-points').post(protect, addMinusPoints);
+
+router.route('/:id/results').get(getCandidateResults);
 
 module.exports = router;
+

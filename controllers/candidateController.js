@@ -1,6 +1,7 @@
 const Candidate = require('../models/Candidate');
 const Team = require('../models/Team');
 const cloudinary = require('cloudinary').v2;
+const Result = require('../models/Result');
 
 // @desc Create a new candidate
 // @route POST /api/candidates
@@ -127,7 +128,7 @@ const deleteCandidate = async (req, res) => {
     }
 }
 
-const addMinusPoint = async (req, res) => {
+const addMinusPoints = async (req, res) => {
     const { points } = req.body;
     const { id: candidateId } = req.params;
 
@@ -162,11 +163,55 @@ const addMinusPoint = async (req, res) => {
     }
 }
 
+// @desc Search for candidate
+// @route GET /api/candidates/search
+// @access Public
+const searchCandidates = async (req, res) => {
+    const searchTerm = req.query.term
+
+    if(!searchTerm) {
+        return res.status(400).json({ message: 'Search term is required' });
+    }
+
+    try {
+        // Use a case-insensitive regex to search both name and admission number
+        const candidates = await Candidate.find({
+            $or: [
+                { name: { $regex: searchTerm, $options: 'i' } },
+                { admissionNo: { $regex: searchTerm, $options: 'i' } }
+            ]
+        }).populate('team', 'name');
+
+        res.status(200).json(candidates);
+    } catch (error) {
+        console.error("Error searching candidates:", error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+// --- THIS IS THE NEW FUNCTION ---
+// @desc    Get all results for a specific candidate
+// @route   GET /api/candidates/:id/results
+// @access  Public
+const getCandidateResults = async (req, res) => {
+    try {
+        const results = await Result.find({ candidate: req.params.id })
+            .populate('programme', 'name'); // Get the programme name for each result
+
+        res.status(200).json(results);
+    } catch (error) {
+        console.error("Error fetching candidate results:", error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 module.exports = {
     createCandidate, 
     getAllCandidates,
     getCandidateById,
     updateCandidate,
     deleteCandidate,
-    addMinusPoint,
+    addMinusPoints,
+    searchCandidates,
+    getCandidateResults,
 }
