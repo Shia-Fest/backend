@@ -167,27 +167,23 @@ const addMinusPoints = async (req, res) => {
 // @route GET /api/candidates/search
 // @access Public
 const searchCandidates = async (req, res) => {
-    const searchTerm = req.query.term
-
-    if(!searchTerm) {
+    const searchTerm = req.query.term;
+    if (!searchTerm) {
         return res.status(400).json({ message: 'Search term is required' });
     }
-
     try {
-        // Use a case-insensitive regex to search both name and admission number
         const candidates = await Candidate.find({
             $or: [
                 { name: { $regex: searchTerm, $options: 'i' } },
                 { admissionNo: { $regex: searchTerm, $options: 'i' } }
             ]
         }).populate('team', 'name');
-
         res.status(200).json(candidates);
     } catch (error) {
         console.error("Error searching candidates:", error);
         res.status(500).json({ message: 'Server Error' });
     }
-}
+};
 
 // --- THIS IS THE NEW FUNCTION ---
 // @desc    Get all results for a specific candidate
