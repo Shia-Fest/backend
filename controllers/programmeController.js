@@ -4,11 +4,11 @@ const Programme = require('../models/Programme');
 // @route POST /api/programmes
 // @access Private/Admin
 const createProgramme = async (req, res) => {
-    const { name, type, date, description } = req.body;
+    const { name, type, date, category } = req.body;
     if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ message: 'Request body is missing' });
     }
-    if( !name || !type || !date ) {
+    if( !name || !type || !date || !category) {
         return res.status(400).json({ message: 'Please provide name, type and date for the programme' });
     }
     try {
@@ -16,7 +16,7 @@ const createProgramme = async (req, res) => {
             name,
             type,
             date,
-            description,
+            category,
         })
 
         const savedProgramme = await newProgramme.save();

@@ -10,12 +10,14 @@ const programmeSchema = new mongoose.Schema({
         required: true,
         enum: ['Stage', 'Non-Stage', 'Starred', 'Group', 'General', 'Special'],
      },
+     category: {
+        type: String,
+        required: true,
+        enum: ['BIDAYA', 'ULA', 'THANIYYAH', 'THANAWIYYAH', 'ALIYA'],
+     },
     date: { 
         type: Date,
          required: true,
-    },
-    description: { 
-        type: String,
     },
     isResultPublished: { 
         type: Boolean,
