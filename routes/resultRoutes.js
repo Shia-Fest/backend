@@ -10,7 +10,7 @@ const certificateRouter = require('./certificateRoutes.js');
 
 // This route now correctly handles GET, POST, and DELETE for a programme's results
 router.route('/')
-    .get(protect, getProgrammeResults)
+    .get(getProgrammeResults)
     .post(protect, savePendingResults)
 
 // Nested route for certificates remains the same
