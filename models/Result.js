@@ -22,7 +22,7 @@ const resultSchema = new mongoose.Schema({
         default: null,
     },
     pointsFromRank: { 
-        type: Number,
+         type: Number,
          default: 0 
     },
     pointsFromGrade: { 
@@ -33,6 +33,13 @@ const resultSchema = new mongoose.Schema({
         type: Number, 
         default: 0,
     },
+    
+    status: {
+            type: String,
+            enum: ['pending', 'approved'],
+            default: 'pending',
+    },
+    
 }, {
     timestamps: true,
     unique: ['programme', 'candidate']

@@ -10,7 +10,8 @@ const teamRoutes = require('./routes/teamRoutes');
 const programmeRoutes = require('./routes/programmeRoutes');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const settingsRoutes = require('./routes/settingsRoutes')
-const authRoutes = require('./routes/authRoutes')
+const authRoutes = require('./routes/authRoutes');
+const allResultsRoutes = require('./routes/allResultsRoutes');
 
 connectDB();
 const app = express();
@@ -27,7 +28,8 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/programmes', programmeRoutes);
 app.use('/api/leaderboards', leaderboardRoutes);
 app.use('/api/settings', settingsRoutes);
-app.use('/api/auth', authRoutes)
+app.use('/api/auth', authRoutes);
+app.use('/api/results', allResultsRoutes)
 
 app.get('/', (req, res) => {
     res.send('API is running...');

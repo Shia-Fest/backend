@@ -18,7 +18,7 @@ const createProgramme = async (req, res) => {
             date,
             category,
         })
-
+       
         const savedProgramme = await newProgramme.save();
         res.status(201).json(savedProgramme);
     }
