@@ -28,4 +28,4 @@ images:
 # This section fixes the error by specifying a dedicated log bucket
 options:
   logging: GCS_ONLY
-  logsBucket: 'gs://huda-festival-backend-build-logs' # <-- IMPORTANT: Use your exact bucket name
+  logsBucket: 'gs://huda-festival-backend-build-logs'   # <-- IMPORTANT: Use your exact bucket name
