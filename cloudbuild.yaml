@@ -25,7 +25,7 @@ steps:
 images:
 - 'gcr.io/$PROJECT_ID/my-backend:$COMMIT_SHA'
 
-# ✅ CORRECT: 'options' has NO indentation
+# This section fixes the logging error
 options:
   logging: GCS_ONLY
-  logsBucket: 'gs://hude-festival-backend-logs' # <-- Make sure this is your bucket name
+  logsBucket: 'gs://hude-festival-backend-logs'
