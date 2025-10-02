@@ -28,4 +28,4 @@ images:
 # This section fixes the logging error
 options:
   logging: GCS_ONLY
-  logsBucket: 'gs://hude-festival-backend-logs'
+  logsBucket: 'gs://huda-festival-backend-logs'
