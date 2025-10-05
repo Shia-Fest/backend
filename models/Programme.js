@@ -13,7 +13,7 @@ const programmeSchema = new mongoose.Schema({
      category: {
         type: String,
         required: true,
-        enum: ['BIDAYA', 'ULA', 'THANIYYAH', 'THANAWIYYAH', 'ALIYA'],
+        enum: ['BIDAYA', 'ULA', 'THANIYYAH', 'THANAWIYYAH', 'ALIYA', 'GENERAL'],
      },
     date: { 
         type: Date,
